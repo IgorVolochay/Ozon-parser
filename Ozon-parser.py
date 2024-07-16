@@ -41,9 +41,11 @@ def get_product_info(product_url):
         image_url = json.loads(json_data["seo"]["script"][0]["innerHTML"])["image"]
         price = json.loads(json_data["seo"]["script"][0]["innerHTML"])["offers"]["price"] + " " +\
                 json.loads(json_data["seo"]["script"][0]["innerHTML"])["offers"]["priceCurrency"]
+        rating = json.loads(json_data["seo"]["script"][0]["innerHTML"]["ratingValue"])
+        rating_counter = json.loads(json_data["seo"]["script"][0]["innerHTML"]["reviewCount"])
         product_id = json.loads(json_data["seo"]["script"][0]["innerHTML"])["sku"]
 
-        return (product_id, full_name, description, price, image_url)
+        return (product_id, full_name, description, price, rating, rating_counter, image_url)
 
 def get_mainpage_cards(driver, url):
     driver.get(url)
@@ -70,11 +72,13 @@ def get_mainpage_cards(driver, url):
             card_url = card[2].find("a", href=True)["href"]
             product_url = "https://ozon.ru/" + card_url
 
-            product_id, full_name, description, price, image_url = get_product_info(card_url)
+            product_id, full_name, description, price, rating, rating_counter, image_url = get_product_info(card_url)
             card_info = {product_id: {"short_name": card_name,
                                       "full_name": full_name,
                                       "description": description,
                                       "url": product_url,
+                                      "rating": rating,
+                                      "rating_counter": rating_counter,
                                       "price": price,
                                       "image_url": image_url
                                       }
@@ -103,11 +107,13 @@ def get_searchpage_cards(driver, url, all_cards = []):
 
         product_url = "https://ozon.ru/" + card_url
 
-        product_id, full_name, description, price, image_url = get_product_info(card_url)
+        product_id, full_name, description, price, rating, rating_counter, image_url = get_product_info(card_url)
         card_info = {product_id: {"short_name": card_name,
                                   "full_name": full_name,
                                   "description": description,
                                   "url": product_url,
+                                  "rating": rating,
+                                  "rating_counter": rating_counter,
                                   "price": price,
                                   "image_url": image_url
                                   }
